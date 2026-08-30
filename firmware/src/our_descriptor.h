@@ -13,7 +13,7 @@
 
 #define MAX_INPUT_REPORT_ID 3
 
-#define NOUR_DESCRIPTORS 6
+#define NOUR_DESCRIPTORS 7
 
 typedef void (*device_connected_t)(uint16_t interface, uint16_t vid, uint16_t pid);
 typedef void (*device_disconnected_t)(uint8_t dev_addr);
@@ -28,6 +28,7 @@ typedef void (*clear_report_t)(uint8_t* report, uint8_t report_id, uint16_t len)
 typedef int32_t (*default_value_t)(uint32_t usage);
 typedef void (*sanitize_report_t)(uint8_t report_id, uint8_t* buffer, uint16_t len);
 typedef bool (*should_cause_wakeup_t)(uint8_t report_id, const uint8_t* buffer, uint16_t len);
+typedef void (*build_report_t)(uint8_t* report, uint8_t report_id, uint16_t len);
 
 struct our_descriptor_def_t {
     uint8_t idx;
@@ -48,6 +49,7 @@ struct our_descriptor_def_t {
     default_value_t default_value = nullptr;
     sanitize_report_t sanitize_report = nullptr;
     should_cause_wakeup_t should_cause_wakeup = nullptr;
+    build_report_t build_report = nullptr;
 };
 
 extern const our_descriptor_def_t our_descriptors[];
