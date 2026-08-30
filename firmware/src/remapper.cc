@@ -1396,6 +1396,9 @@ void process_mapping(bool auto_repeat) {
         if (our_descriptor->sanitize_report != nullptr) {
             our_descriptor->sanitize_report(report_id, reports[report_id], report_sizes[report_id]);
         }
+        if (our_descriptor->build_report != nullptr) {
+            our_descriptor->build_report(reports[report_id], report_id, report_sizes[report_id]);
+        }
         if (needs_to_be_sent(report_id)) {
             if (or_items == OR_BUFSIZE) {
                 printf("overflow!\n");
