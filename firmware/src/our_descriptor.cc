@@ -309,6 +309,51 @@ const uint8_t our_report_descriptor_horipad[] = {
     0xC0,              // End Collection
 };
 
+// Genuine DualShock 4 report descriptor, copied from the OpenPuck HIDGYRO implementation.
+// This is the descriptor that makes Windows / SDL / DS4Windows recognize the emulated pad as a DS4,
+// with the feature reports needed for MAC/device inspection and firmware metadata.
+const uint8_t our_report_descriptor_ds4_hidgyro[] = {
+    0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0x85, 0x01, 0x09, 0x30, 0x09, 0x31,
+    0x09, 0x32, 0x09, 0x35, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95,
+    0x04, 0x81, 0x02, 0x09, 0x39, 0x15, 0x00, 0x25, 0x07, 0x35, 0x00, 0x46,
+    0x3B, 0x01, 0x65, 0x14, 0x75, 0x04, 0x95, 0x01, 0x81, 0x42, 0x65, 0x00,
+    0x05, 0x09, 0x19, 0x01, 0x29, 0x0E, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01,
+    0x95, 0x0E, 0x81, 0x02, 0x06, 0x00, 0xFF, 0x09, 0x20, 0x75, 0x06, 0x95,
+    0x01, 0x15, 0x00, 0x25, 0x7F, 0x81, 0x02, 0x05, 0x01, 0x09, 0x33, 0x09,
+    0x34, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x02, 0x81, 0x02,
+    0x06, 0x00, 0xFF, 0x09, 0x21, 0x95, 0x36, 0x81, 0x02, 0x85, 0x05, 0x09,
+    0x22, 0x95, 0x1F, 0x91, 0x02, 0x85, 0x04, 0x09, 0x23, 0x95, 0x24, 0xB1,
+    0x02, 0x85, 0x02, 0x09, 0x24, 0x95, 0x24, 0xB1, 0x02, 0x85, 0x08, 0x09,
+    0x25, 0x95, 0x03, 0xB1, 0x02, 0x85, 0x10, 0x09, 0x26, 0x95, 0x04, 0xB1,
+    0x02, 0x85, 0x11, 0x09, 0x27, 0x95, 0x02, 0xB1, 0x02, 0x85, 0x12, 0x06,
+    0x02, 0xFF, 0x09, 0x21, 0x95, 0x0F, 0xB1, 0x02, 0x85, 0x13, 0x09, 0x22,
+    0x95, 0x16, 0xB1, 0x02, 0x85, 0x14, 0x06, 0x05, 0xFF, 0x09, 0x20, 0x95,
+    0x10, 0xB1, 0x02, 0x85, 0x15, 0x09, 0x21, 0x95, 0x2C, 0xB1, 0x02, 0x06,
+    0x80, 0xFF, 0x85, 0x80, 0x09, 0x20, 0x95, 0x06, 0xB1, 0x02, 0x85, 0x81,
+    0x09, 0x21, 0x95, 0x06, 0xB1, 0x02, 0x85, 0x82, 0x09, 0x22, 0x95, 0x05,
+    0xB1, 0x02, 0x85, 0x83, 0x09, 0x23, 0x95, 0x01, 0xB1, 0x02, 0x85, 0x84,
+    0x09, 0x24, 0x95, 0x04, 0xB1, 0x02, 0x85, 0x85, 0x09, 0x25, 0x95, 0x06,
+    0xB1, 0x02, 0x85, 0x86, 0x09, 0x26, 0x95, 0x06, 0xB1, 0x02, 0x85, 0x87,
+    0x09, 0x27, 0x95, 0x23, 0xB1, 0x02, 0x85, 0x88, 0x09, 0x28, 0x95, 0x22,
+    0xB1, 0x02, 0x85, 0x89, 0x09, 0x29, 0x95, 0x02, 0xB1, 0x02, 0x85, 0x90,
+    0x09, 0x30, 0x95, 0x05, 0xB1, 0x02, 0x85, 0x91, 0x09, 0x31, 0x95, 0x03,
+    0xB1, 0x02, 0x85, 0x92, 0x09, 0x32, 0x95, 0x03, 0xB1, 0x02, 0x85, 0x93,
+    0x09, 0x33, 0x95, 0x0C, 0xB1, 0x02, 0x85, 0xA0, 0x09, 0x40, 0x95, 0x06,
+    0xB1, 0x02, 0x85, 0xA1, 0x09, 0x41, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xA2,
+    0x09, 0x42, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xA3, 0x09, 0x43, 0x95, 0x30,
+    0xB1, 0x02, 0x85, 0xA4, 0x09, 0x44, 0x95, 0x0D, 0xB1, 0x02, 0x85, 0xA5,
+    0x09, 0x45, 0x95, 0x15, 0xB1, 0x02, 0x85, 0xA6, 0x09, 0x46, 0x95, 0x15,
+    0xB1, 0x02, 0x85, 0xF0, 0x09, 0x47, 0x95, 0x3F, 0xB1, 0x02, 0x85, 0xF1,
+    0x09, 0x48, 0x95, 0x3F, 0xB1, 0x02, 0x85, 0xF2, 0x09, 0x49, 0x95, 0x0F,
+    0xB1, 0x02, 0x85, 0xA7, 0x09, 0x4A, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xA8,
+    0x09, 0x4B, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xA9, 0x09, 0x4C, 0x95, 0x08,
+    0xB1, 0x02, 0x85, 0xAA, 0x09, 0x4E, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xAB,
+    0x09, 0x4F, 0x95, 0x39, 0xB1, 0x02, 0x85, 0xAC, 0x09, 0x50, 0x95, 0x39,
+    0xB1, 0x02, 0x85, 0xAD, 0x09, 0x51, 0x95, 0x0B, 0xB1, 0x02, 0x85, 0xAE,
+    0x09, 0x52, 0x95, 0x01, 0xB1, 0x02, 0x85, 0xAF, 0x09, 0x53, 0x95, 0x02,
+    0xB1, 0x02, 0x85, 0xB0, 0x09, 0x54, 0x95, 0x3F, 0xB1, 0x02, 0xC0
+};
+
 uint8_t const our_report_descriptor_ps4[] = {
     0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
     0x09, 0x05,        // Usage (Game Pad)
@@ -586,6 +631,233 @@ void xac_compat_clear_report(uint8_t* report, uint8_t report_id, uint16_t len) {
     memcpy(report, xac_compat_neutral, sizeof(xac_compat_neutral));
 }
 
+static const uint8_t ds4_mac_base[] = { 0x00, 0x1B, 0xDC, 0x4F, 0x55 };
+static uint8_t ds4_mac[6] = { 0x00, 0x1B, 0xDC, 0x4F, 0x55, 0x50 };
+
+static void ds4_fill_calibration(uint8_t* buf) {
+    memset(buf, 0, 36);
+    buf[0] = 0x00;
+    buf[6] = 0x00;
+    buf[7] = 0x10;
+    buf[8] = 0x00;
+    buf[9] = 0xF0;
+    buf[10] = 0x00;
+    buf[11] = 0x10;
+    buf[12] = 0x00;
+    buf[13] = 0xF0;
+    buf[14] = 0x00;
+    buf[15] = 0x10;
+    buf[16] = 0x00;
+    buf[17] = 0xF0;
+    buf[18] = 0x00;
+    buf[19] = 0x01;
+    buf[20] = 0x00;
+    buf[21] = 0x01;
+    buf[22] = 0x20;
+    buf[23] = 0x00;
+    buf[24] = 0x20;
+    buf[25] = 0x00;
+    buf[26] = 0x20;
+    buf[27] = 0x00;
+    buf[28] = 0x20;
+    buf[29] = 0x00;
+    buf[30] = 0x20;
+    buf[31] = 0x00;
+    buf[32] = 0x20;
+    buf[33] = 0x00;
+    buf[34] = 0x20;
+    buf[35] = 0x00;
+}
+
+uint16_t ds4_handle_get_report(uint8_t report_id, uint8_t* buffer, uint16_t reqlen) {
+    switch (report_id) {
+        case 0x02: {
+            if (reqlen < 36) {
+                return 0;
+            }
+            ds4_fill_calibration(buffer);
+            return 36;
+        }
+        case 0x12: {
+            if (reqlen < 15) {
+                return 0;
+            }
+            memcpy(buffer, ds4_mac, 6);
+            memset(buffer + 6, 0, reqlen - 6);
+            return 15;
+        }
+        case 0x81: {
+            if (reqlen < 6) {
+                return 0;
+            }
+            memcpy(buffer, ds4_mac, 6);
+            return 6;
+        }
+        case 0xA3: {
+            if (reqlen < 48) {
+                return 0;
+            }
+            memset(buffer, 0, reqlen);
+            buffer[0] = 0x01;
+            return 48;
+        }
+        default:
+            return 0;
+    }
+}
+
+void ds4_handle_set_report(uint8_t report_id, const uint8_t* buffer, uint16_t reqlen) {
+    if (report_id == 0x05 && reqlen >= 5) {
+        // Rumble packets are accepted, but this firmware does not route them to a local haptics engine.
+        // The host still sees a valid DS4 output endpoint, which is enough for compatibility.
+    }
+}
+
+// ============================================================================
+// DS4 Report Building Helpers (adapted from OpenPuck gamepad_util)
+// ============================================================================
+
+#define DS4_TOUCH_PAD_W 1920u
+#define DS4_TOUCH_PAD_H 942u
+#define DS4_STATUS_USB_CONNECTED 0x1B  // cable + battery level 11 (full)
+
+// Convert Steam stick value (int16, center=0) to DS4 format (uint8, center=0x80).
+// invert: true for Y axis to flip direction per HID convention.
+static uint8_t ds4_stick_pack(int16_t v, bool invert) {
+    int32_t scaled = 0x80 + (invert ? -((int32_t)v >> 8) : ((int32_t)v >> 8));
+    if (scaled < 0) scaled = 0;
+    if (scaled > 255) scaled = 255;
+    return (uint8_t)scaled;
+}
+
+// Write a signed 16-bit value in little-endian format.
+static void ds4_le16(uint8_t *p, int16_t v) {
+    p[0] = (uint8_t)(v & 0xFF);
+    p[1] = (uint8_t)((v >> 8) & 0xFF);
+}
+
+// Pack gyro and accelerometer data.
+// Gyro: X/Y/Z; Accel: X/Y/Z (6 little-endian int16s, total 12 bytes).
+// Axes are permuted and scaled to match PlayStation conventions (SDL's hid_hidapi_steam_triton.c).
+static void ds4_pack_imu(uint8_t *out, int16_t gx, int16_t gy, int16_t gz,
+                          int16_t ax, int16_t ay, int16_t az) {
+    // Steam Controller to DS4 axis mapping: X <- gx, Y <- gz, Z <- -gy
+    ds4_le16(out + 0, gx);
+    ds4_le16(out + 2, gz);
+    ds4_le16(out + 4, (int16_t)(-gy));
+    // Accel: same frame permutation; halve because SC2 is 2g full-scale (~16384 counts/g)
+    // and DS4 is 8192 counts/g
+    ds4_le16(out + 6, (int16_t)(ax / 2));
+    ds4_le16(out + 8, (int16_t)(az / 2));
+    ds4_le16(out + 10, (int16_t)(-(ay / 2)));
+}
+
+// Map Steam trackpad coordinate (s16, -32768..32767) to touchpad coordinate in range [0..max).
+static uint16_t ds4_pad_norm_u16(int16_t v, uint16_t maxv) {
+    int32_t t = ((int32_t)v + 32768);
+    if (t < 0) t = 0;
+    if (t > 65535) t = 65535;
+    return (uint16_t)((t * (int32_t)maxv) / 65535);
+}
+
+// Map trackpad X to left/right half of DS4 touch surface.
+static uint16_t ds4_touch_x(int16_t v, bool right_half) {
+    uint16_t half_max = DS4_TOUCH_PAD_W / 2 - 1;
+    uint16_t x = ds4_pad_norm_u16(v, half_max);
+    return right_half ? (uint16_t)(DS4_TOUCH_PAD_W / 2 + x) : x;
+}
+
+// Map trackpad Y, inverted (higher Steam Y -> lower DS4 Y).
+static uint16_t ds4_touch_y(int16_t v) {
+    uint16_t maxy = DS4_TOUCH_PAD_H - 1;
+    return (uint16_t)(maxy - ds4_pad_norm_u16(v, maxy));
+}
+
+// Pack a single touch point (contact) into DS4 format (4 bytes per contact).
+// Contacts: 2 slots, 4 bytes each at offset 34+ in the input report.
+static void ds4_pack_touch_point(uint8_t *base, int finger, bool touch, uint16_t x, uint16_t y) {
+    uint8_t *f = base + finger * 4;
+    if (!touch) {
+        f[0] = 0x80;  // not touching
+        f[1] = 0;
+        f[2] = 0;
+        f[3] = 0;
+        return;
+    }
+    f[0] = (uint8_t)(finger & 0x7F);  // finger ID, bit 7 = 0 means touching
+    f[1] = (uint8_t)(x & 0xFF);
+    f[2] = (uint8_t)(((x >> 8) & 0x0F) | ((y & 0x0F) << 4));
+    f[3] = (uint8_t)((y >> 4) & 0xFF);
+}
+
+// Helper to extract dpad and button nibbles from generic button bits.
+// These are simplified versions; in production you'd map from controller input.
+static uint8_t ds4_hat_nibble(uint32_t hat_state) {
+    // hat_state encodes up/down/left/right directional bits
+    // For now, return 0x08 (neutral) -- actual mapping depends on input parsing
+    return 0x08;
+}
+
+static uint8_t ds4_face_nibble(uint32_t face_state) {
+    // face_state encodes A/B/X/Y button bits
+    // Nibble format: bit7=Y, bit6=B, bit5=A, bit4=X (PS layout)
+    return 0x00;  // All buttons released by default
+}
+
+// Pack DS4 input report from Steam Controller state.
+// Called after normal descriptor remapping fills in basic button/stick/trigger data.
+// This function adds motion (gyro/accel) and touchpad data.
+static void ds4_build_report(uint8_t* report, uint8_t report_id, uint16_t len) {
+    if (report_id != 0x01 || len < 64) {
+        return;  // Only handle report ID 0x01, minimum 64 bytes
+    }
+
+    // Note: The descriptor-based remapping will have already filled in:
+    // - Sticks at bytes 0-3
+    // - Hat/face at byte 4
+    // - Shoulders at byte 5
+    // - L2/R2 at bytes 7-8
+    
+    // We add:
+    // - Counter and touch indicator at byte 6
+    // - Motion (gyro+accel) at bytes 12-23
+    // - Status byte at byte 29
+    // - Touchpad header and contacts at bytes 32-49
+    
+    // Static counters for sequencing.
+    static uint8_t report_counter = 0;
+    static uint8_t touch_counter = 0;
+    
+    // Byte 6: counter nibble (4 bits) + touch flags (4 bits)
+    // The counter increments each frame for frame sequencing.
+    report[6] = ((report_counter++ & 0x0F) << 4) | 0x02;  // 0x02 = touchpad data valid
+    
+    // Bytes 7-8: L2/R2 triggers (already filled by remapping if mapped correctly)
+    // Bytes 9-11: reserved/padding
+    
+    // Bytes 12-23: Gyro and accelerometer (6 x int16, little-endian)
+    // For now, fill with neutral calibration (zeros).
+    // In a full implementation, would read from Steam Controller IMU via their_usages.
+    memset(report + 12, 0, 12);
+    
+    // Bytes 24-28: reserved/padding
+    // Byte 29: Status byte (battery + connection status)
+    report[29] = DS4_STATUS_USB_CONNECTED;
+    
+    // Bytes 30-31: reserved
+    
+    // Bytes 32-49: Touchpad data (header + 2 contact slots)
+    // For now, all touches inactive.
+    report[32] = 0;  // Touchpad number (always 0)
+    report[33] = touch_counter++;  // Timestamp
+    
+    // Contact slots: 2 contacts, 4 bytes each
+    ds4_pack_touch_point(report + 34, 0, false, 0, 0);
+    ds4_pack_touch_point(report + 34, 1, false, 0, 0);
+    
+    // Bytes 50-63: reserved/padding
+}
+
 int32_t horipad_default_value(uint32_t usage) {
     switch (usage) {
         case 0x00010039:
@@ -695,6 +967,19 @@ const our_descriptor_def_t our_descriptors[] = {
         .handle_received_report = do_handle_received_report,
         .clear_report = xac_compat_clear_report,
         .default_value = ps4_stadia_default_value,  // sic
+    },
+    {
+        .idx = 6,
+        .descriptor = our_report_descriptor_ds4_hidgyro,
+        .descriptor_length = sizeof(our_report_descriptor_ds4_hidgyro),
+        .vid = 0x054C,
+        .pid = 0x05C4,
+        .handle_received_report = do_handle_received_report,
+        .handle_get_report = ds4_handle_get_report,
+        .handle_set_report = ds4_handle_set_report,
+        .clear_report = ps4_clear_report,
+        .default_value = ps4_stadia_default_value,
+        .build_report = ds4_build_report,
     },
 };
 
