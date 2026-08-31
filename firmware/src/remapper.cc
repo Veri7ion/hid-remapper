@@ -343,7 +343,7 @@ bool assign_state_slot(uint32_t usage, uint8_t hub_port, bool raw) {
     return true;
 }
 
-inline int32_t* get_state_ptr(uint32_t usage, uint8_t hub_port, bool assign_if_absent = false, bool raw = false) {
+int32_t* get_state_ptr(uint32_t usage, uint8_t hub_port, bool assign_if_absent, bool raw) {
     uint64_t key = (raw ? ((uint64_t) 1 << 40) : 0) | ((uint64_t) hub_port << 32) | usage;
     auto search = usage_state_ptr.find(key);
     if (search != usage_state_ptr.end()) {
