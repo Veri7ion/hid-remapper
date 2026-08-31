@@ -804,6 +804,49 @@ static uint8_t ds4_face_nibble(uint32_t face_state) {
     return 0x00;  // All buttons released by default
 }
 
+// Steam Controller (2026) native usages used below.
+// Source: HID Remapper forum post by the project's creator.
+#define SC_LEFT_TRACKPAD_TOUCH  0x00090017
+#define SC_RIGHT_TRACKPAD_TOUCH 0x00090018
+#define SC_LEFT_TRACKPAD_X      0xfffb0001
+#define SC_LEFT_TRACKPAD_Y      0xfffb0002
+#define SC_RIGHT_TRACKPAD_X     0xfffb0004
+#define SC_RIGHT_TRACKPAD_Y     0xfffb0005
+ 
+// Measured empirically via the config tool's Monitor tab (same for both pads):
+// X: -32766 (left edge) .. +32766 (right edge)
+// Y: +32766 (top edge)  .. -32766 (bottom edge)  -- inverted vs. DS4's top=0
+#define SC_TRACKPAD_RAW_MIN  (-32766)
+#define SC_TRACKPAD_RAW_MAX  32766
+#define SC_TRACKPAD_RAW_RANGE (SC_TRACKPAD_RAW_MAX - SC_TRACKPAD_RAW_MIN)  // 65532
+ 
+// Real DS4 touchpad resolution.
+#define DS4_TOUCHPAD_X_MAX 1920
+#define DS4_TOUCHPAD_Y_MAX 942
+ 
+static int32_t ds4_clamp(int32_t v, int32_t lo, int32_t hi) {
+    if (v < lo) return lo;
+    if (v > hi) return hi;
+    return v;
+}
+ 
+// Scales a raw trackpad X reading into [out_min, out_max] (used to place
+// each physical pad into its half of the DS4's touchpad width).
+static uint16_t ds4_scale_trackpad_x(int32_t raw_x, uint16_t out_min, uint16_t out_max) {
+    int32_t clamped = ds4_clamp(raw_x, SC_TRACKPAD_RAW_MIN, SC_TRACKPAD_RAW_MAX);
+    int32_t span = out_max - out_min;
+    int32_t scaled = out_min + (int32_t)(((int64_t)(clamped - SC_TRACKPAD_RAW_MIN) * span) / SC_TRACKPAD_RAW_RANGE);
+    return (uint16_t) scaled;
+}
+ 
+// Scales a raw trackpad Y reading into [0, DS4_TOUCHPAD_Y_MAX], flipping
+// orientation since the Steam Controller reports +max at the top.
+static uint16_t ds4_scale_trackpad_y(int32_t raw_y) {
+    int32_t clamped = ds4_clamp(raw_y, SC_TRACKPAD_RAW_MIN, SC_TRACKPAD_RAW_MAX);
+    int32_t scaled = (int32_t)(((int64_t)(SC_TRACKPAD_RAW_MAX - clamped) * DS4_TOUCHPAD_Y_MAX) / SC_TRACKPAD_RAW_RANGE);
+    return (uint16_t) scaled;
+}
+
 // Pack DS4 input report from Steam Controller state.
 // Called after normal descriptor remapping fills in basic button/stick/trigger data.
 // This function adds motion (gyro/accel) and touchpad data.
@@ -836,8 +879,7 @@ static void ds4_build_report(uint8_t* report, uint8_t report_id, uint16_t len) {
     // Bytes 9-11: reserved/padding
     
     // Bytes 12-23: Gyro and accelerometer (6 x int16, little-endian)
-    // For now, fill with neutral calibration (zeros).
-    // In a full implementation, would read from Steam Controller IMU via their_usages.
+    // TODO: revisit once touchpads are confirmed working. Neutral for now. 
     memset(report + 12, 0, 12);
     
     // Bytes 24-28: reserved/padding
@@ -845,6 +887,38 @@ static void ds4_build_report(uint8_t* report, uint8_t report_id, uint16_t len) {
     report[29] = DS4_STATUS_USB_CONNECTED;
     
     // Bytes 30-31: reserved
+
+        // Bytes 32-49: Touchpad data (header + 2 contact slots).
+    // Left Steam Controller trackpad -> left half of DS4 touchpad (contact 0).
+    // Right Steam Controller trackpad -> right half of DS4 touchpad (contact 1).
+    report[32] = 0;  // Touchpad number (always 0)
+    report[33] = touch_counter++;  // Timestamp
+ 
+    int32_t* left_touch = get_state_ptr(SC_LEFT_TRACKPAD_TOUCH, 0, false, true);
+    int32_t* left_x = get_state_ptr(SC_LEFT_TRACKPAD_X, 0, false, true);
+    int32_t* left_y = get_state_ptr(SC_LEFT_TRACKPAD_Y, 0, false, true);
+    int32_t* right_touch = get_state_ptr(SC_RIGHT_TRACKPAD_TOUCH, 0, false, true);
+    int32_t* right_x = get_state_ptr(SC_RIGHT_TRACKPAD_X, 0, false, true);
+    int32_t* right_y = get_state_ptr(SC_RIGHT_TRACKPAD_Y, 0, false, true);
+ 
+    bool left_active = (left_touch != NULL) && (*left_touch != 0) && (left_x != NULL) && (left_y != NULL);
+    bool right_active = (right_touch != NULL) && (*right_touch != 0) && (right_x != NULL) && (right_y != NULL);
+ 
+    if (left_active) {
+        uint16_t x = ds4_scale_trackpad_x(*left_x, 0, DS4_TOUCHPAD_X_MAX / 2);
+        uint16_t y = ds4_scale_trackpad_y(*left_y);
+        ds4_pack_touch_point(report + 34, 0, true, x, y);
+    } else {
+        ds4_pack_touch_point(report + 34, 0, false, 0, 0);
+    }
+ 
+    if (right_active) {
+        uint16_t x = ds4_scale_trackpad_x(*right_x, DS4_TOUCHPAD_X_MAX / 2, DS4_TOUCHPAD_X_MAX);
+        uint16_t y = ds4_scale_trackpad_y(*right_y);
+        ds4_pack_touch_point(report + 34, 1, true, x, y);
+    } else {
+        ds4_pack_touch_point(report + 34, 1, false, 0, 0);
+    }
     
     // Bytes 32-49: Touchpad data (header + 2 contact slots)
     // For now, all touches inactive.
