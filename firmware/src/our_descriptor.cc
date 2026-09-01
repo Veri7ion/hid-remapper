@@ -775,18 +775,24 @@ static uint16_t ds4_touch_y(int16_t v) {
 
 // Pack a single touch point (contact) into DS4 format (4 bytes per contact).
 // Contacts: 2 slots, 4 bytes each at offset 34+ in the input report.
-static void ds4_pack_touch_point(uint8_t *base, int finger, bool touch, uint16_t x, uint16_t y) {
+// Format: [counter(7)|unpressed(1)][X_low(8)][X_hi(4)|Y_lo(4)][Y_hi(8)]
+// Coordinates are 12-bit: X=[0..1920], Y=[0..943]
+static void ds4_pack_touch_point(uint8_t *base, int finger, bool touch, uint16_t x, uint16_t y, uint8_t counter) {
     uint8_t *f = base + finger * 4;
     if (!touch) {
-        f[0] = 0x80;  // not touching
+        f[0] = 0x80;  // counter=0, unpressed=1 (bit 7)
         f[1] = 0;
         f[2] = 0;
         f[3] = 0;
         return;
     }
-    f[0] = (uint8_t)(finger & 0x7F);  // finger ID, bit 7 = 0 means touching
+    // Byte 0: counter (7 bits) + unpressed flag (bit 7, 0=touching)
+    f[0] = (counter & 0x7F);  // counter in bits 0-6, unpressed bit 7 = 0
+    // Byte 1: X low 8 bits
     f[1] = (uint8_t)(x & 0xFF);
+    // Byte 2: X high 4 bits + Y low 4 bits
     f[2] = (uint8_t)(((x >> 8) & 0x0F) | ((y & 0x0F) << 4));
+    // Byte 3: Y high 8 bits
     f[3] = (uint8_t)((y >> 4) & 0xFF);
 }
 
@@ -816,8 +822,7 @@ static void ds4_build_report(uint8_t* report, uint8_t report_id, uint16_t len) {
     // - Sticks at bytes 0-3
     // - Hat/face at byte 4
     // - Shoulders at byte 5
-    // - L2/R2 at bytes 7-8
-
+    // - L2/R2 at bytes 7-8    
     // We add:
     // - Counter and touch indicator at byte 6
     // - Motion (gyro+accel) at bytes 12-23
@@ -856,10 +861,16 @@ static void ds4_build_report(uint8_t* report, uint8_t report_id, uint16_t len) {
     report[29] = DS4_STATUS_USB_CONNECTED;
 
     report[32] = 0;  // Touchpad number (always 0)
-    report[33] = touch_counter++;
+    report[33] = touch_counter;  // Touchpad increment
 
-    ds4_pack_touch_point(report + 34, 0, touch1, x1, y1);
-    ds4_pack_touch_point(report + 34, 1, touch2, x2, y2);
+    // Pack both touch contacts with current counter
+    ds4_pack_touch_point(report + 34, 0, touch1, x1, y1, touch_counter);
+    ds4_pack_touch_point(report + 34, 1, touch2, x2, y2, touch_counter);
+    
+    // Increment counter for next frame (0-127 range)
+    if (touch1 || touch2) {
+        touch_counter = (touch_counter < 127) ? (touch_counter + 1) : 0;
+    }
 }
 
 int32_t horipad_default_value(uint32_t usage) {
