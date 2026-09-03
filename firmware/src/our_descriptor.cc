@@ -356,6 +356,7 @@ uint8_t const our_report_descriptor_ps4[] = {
     0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
     0x06, 0x00, 0xFF,  //   Usage Page (Vendor Defined 0xFF00)
     0x09, 0x21,        //   Usage (0x21)
+    0x75, 0x08,        //   Report Size (8)
     0x95, 0x18,        //   Report Count (24)
     0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
     0x06, 0xFA, 0xFF,  //   Usage Page (Vendor Defined 0xFFFA)
